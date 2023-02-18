@@ -1,0 +1,6 @@
+.main-header {
+  @apply flex gap-4 p-4 items-center bg-red-400 text-gray-800 selection:bg-black selection:text-white;
+}
+nav{
+    margin-left: auto;
+}

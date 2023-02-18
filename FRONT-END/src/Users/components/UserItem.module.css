@@ -1,0 +1,12 @@
+.userItem {
+  @apply inline-block flex gap-4 text-left items-center w-[300px] overflow-hidden;
+}
+.avatar {
+  @apply h-16 w-16  flex-shrink-0; 
+}
+.right {
+  @apply w-full;
+}
+.email {
+  @apply opacity-50 text-xs mt-0 mb-2;
+}

@@ -1,0 +1,10 @@
+nav .nav-link a.active {
+  -webkit-text-stroke: .7px rgb(187, 34, 34);
+  -webkit-text-fill-color: red;
+}
+.nav-link a{
+    @apply font-bold
+}
+.nav-link{
+    @apply flex gap-4
+}

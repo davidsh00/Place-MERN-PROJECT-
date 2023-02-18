@@ -1,0 +1,42 @@
+.sidebar-drawer {
+  @apply fixed w-[50%] h-screen  top-0 bg-sky-200 flex justify-center items-center z-10;
+  transition: all 0.2s;
+  left:0;
+  transform: translateX(-100%);
+
+}
+
+.sidebar-drawer .close-btn {
+  transform: rotate(45deg);
+  font-size: 3rem;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  cursor: pointer;
+  display: block;
+  @apply hover:text-red-600;
+}
+.sidebar-drawer.side-in-left-active .close-btn {
+  display: block;
+}
+.sidebar-drawer.active {
+  @apply left-0 sm:left-[-100%];
+}
+.sidebar-drawer .nav-link {
+  @apply flex-col gap-6;
+}
+.sidebar-drawer .nav-link a {
+  @apply text-blue-400;
+}
+.sidebar-drawer .nav-link a.active {
+  @apply text-blue-900;
+}
+.side-in-left-enter {
+  transform: translateX(0%);
+}
+.side-in-left-enter-done{
+  transform: translateX(0%);
+}
+.side-in-left-exit {
+  transform: translateX(-100%);
+}

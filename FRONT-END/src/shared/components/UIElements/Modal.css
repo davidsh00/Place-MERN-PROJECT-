@@ -1,0 +1,27 @@
+.modal{
+    @apply fixed rounded-lg  max-w-[600px] bg-white w-[80%] min-h-[10vh] z-10 left-[50%] top-[50%] opacity-0 transition-all;
+    transform: translate(-50%,-50%);
+}
+.modal-enter{
+    opacity: 0;
+}
+.modal-enter-active{
+    opacity: 1;
+}
+.modal-enter-done{
+
+    opacity: 1;
+}
+.modal-eixt-active{
+opacity: 0;
+}
+
+.modal__header{
+    @apply p-4 bg-blue-800 text-white
+}
+.modal__content{
+    @apply p-4 
+}
+.modal__footer{
+    @apply flex justify-center gap-4 items-center
+}

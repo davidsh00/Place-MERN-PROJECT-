@@ -1,0 +1,6 @@
+.place-item .card>*{
+    @apply mb-4
+}
+.place-item__actions{
+    @apply flex gap-4 justify-center items-center
+}

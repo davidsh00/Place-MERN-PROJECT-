@@ -1,0 +1,6 @@
+.button {
+  @apply min-w-[100px] text-center px-4 py-2 rounded cursor-pointer border-red-600 border-2 hover:bg-white hover:text-red-600 font-bold transition-all text-black bg-white;
+}
+.button.danger {
+  @apply bg-red-600 text-white hover:bg-white hover:text-black;
+}

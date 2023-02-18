@@ -1,0 +1,12 @@
+.menu-btn {
+  @apply w-8   bg-transparent outline-none border-none  flex-col gap-2 cursor-pointer flex sm:hidden;
+}
+.menu-btn:hover > span {
+  @apply bg-gray-50;
+}
+.menu-btn > span {
+  @apply h-1 bg-gray-800;
+}
+nav {
+  @apply sm:block hidden;
+}
