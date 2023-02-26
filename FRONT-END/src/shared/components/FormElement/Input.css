@@ -1,0 +1,24 @@
+.form-control {
+  @apply w-full flex flex-col gap-2 mb-6;
+}
+.form-control label {
+  @apply font-bold;
+}
+.form-control--invalid {
+  @apply text-red-500;
+}
+.form-control .form-control__error {
+  @apply hidden;
+}
+.form-control--invalid .form-control__error {
+  @apply block;
+}
+.form-control input,
+.form-control textarea {
+  @apply border p-2 rounded  outline-none ;
+}
+
+.form-control--invalid input,
+.form-control--invalid textarea {
+  @apply  border-red-500;
+}

@@ -1,0 +1,19 @@
+.confirm-delete__container {
+  @apply flex items-center justify-center;
+}
+.confirm-delete-enter-done .confirm-delete__box {
+  @apply scale-100;
+}
+.confirm-delete-enter .confirm-delete__box {
+  @apply scale-100;
+}
+.confirm-delete-exit .confirm-delete__box {
+  @apply scale-[.25];
+}
+.confirm-delete__box {
+  @apply bg-white rounded min-w-[300px] p-4  transition-all scale-[.25];
+}
+
+.confirm-delete__actions {
+  @apply flex gap-4 justify-center mt-4;
+}

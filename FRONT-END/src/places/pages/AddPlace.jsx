@@ -1,4 +1,6 @@
+import PlaceForm from "../components/PlaceForm";
+
 const AddPlace = () => {
-  return <h1>Add place page</h1>;
+  return <PlaceForm />;
 };
 export default AddPlace;

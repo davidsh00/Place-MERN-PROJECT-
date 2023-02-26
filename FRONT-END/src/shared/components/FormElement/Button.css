@@ -4,3 +4,6 @@
 .button.danger {
   @apply bg-red-600 text-white hover:bg-white hover:text-black;
 }
+.button:disabled {
+  @apply opacity-30 pointer-events-none;
+}

@@ -1,6 +1,7 @@
-main{
-    margin-top: 2rem;
+main {
+  margin-top: 2rem;
+    @apply px-4
 }
-body{
-    @apply bg-gray-200
+body {
+  @apply bg-gray-200;
 }

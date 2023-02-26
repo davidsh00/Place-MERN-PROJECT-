@@ -1,16 +1,18 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Button from "../../shared/components/FormElement/Button";
-import BackDrop from "../../shared/components/UIElements/BackDrop";
 import Card from "../../shared/components/UIElements/Card";
+import ConfirmDelete from "../../shared/components/UIElements/ConfirmDelete";
+import Map from "../../shared/components/UIElements/Map";
 import Modal from "../../shared/components/UIElements/Modal";
+import { authContext } from "../../shared/context/auth-context";
 
 import "./PlaceItem.css";
 const PlaceItem = ({ item }) => {
-  const { title, address, description, creatorId, placeId, location, image } =
+  const { title, address, description, placeId, location, image } =
     item;
-  console.log(placeId);
-
+  const auth = useContext(authContext);
   const [showMap, setShowMap] = useState(false);
+  const [showDelete, setShowDelete] = useState(false);
 
   function handleShowMap() {
     setShowMap(true);
@@ -18,8 +20,24 @@ const PlaceItem = ({ item }) => {
   function handleCloseMap() {
     setShowMap(false);
   }
+  function showDeleteModal() {
+    setShowDelete(true);
+  }
+  function closeConfirmDeleteHandler() {
+    setShowDelete(false);
+  }
+  function deletePlaceItemHandler() {
+    console.log("deleted ", placeId);
+    closeConfirmDeleteHandler();
+  }
   return (
     <li className="place-item">
+      <ConfirmDelete
+        message={`Are you share to Delete ${title}`}
+        onCancel={closeConfirmDeleteHandler}
+        onConfirm={deletePlaceItemHandler}
+        show={showDelete}
+      />
       <Modal
         show={showMap}
         onCancel={handleCloseMap}
@@ -30,7 +48,7 @@ const PlaceItem = ({ item }) => {
           </Button>
         }
       >
-        this is a map
+        <Map location={location} />
       </Modal>
       <Card>
         <img src={image} alt={title} />
@@ -39,8 +57,15 @@ const PlaceItem = ({ item }) => {
         <address>{address}</address>
         <div className="place-item__actions">
           <Button onClick={handleShowMap}>Show on The Map</Button>
-          <Button to={`/places/${placeId}`}>Edit</Button>
-          <Button danger>Delete</Button>
+          {auth.isLoggedIn && (
+            <>
+              {" "}
+              <Button to={`/places/${placeId}`}>Edit</Button>
+              <Button onClick={showDeleteModal} danger>
+                Delete
+              </Button>
+            </>
+          )}
         </div>
       </Card>
     </li>

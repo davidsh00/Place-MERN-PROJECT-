@@ -1,3 +1,4 @@
+import Button from "../../shared/components/FormElement/Button";
 import Card from "../../shared/components/UIElements/Card";
 import PlaceItem from "./PlaceItem";
 import "./PlacesList.css";
@@ -7,7 +8,7 @@ const PlacesList = ({ items }) => {
       <Card>
         <h2>There is No Places</h2>
         <div className="text-center">
-          <button>Add Place</button>
+          <Button to="/places/new">Share Place</Button>
         </div>
       </Card>
     );

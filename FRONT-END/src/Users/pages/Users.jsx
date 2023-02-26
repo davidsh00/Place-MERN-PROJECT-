@@ -11,7 +11,7 @@ const Users = () => {
       placeCount: 3,
     },
     {
-      id: "u1",
+      id: "u2",
       email: "davoodsh000@gmail.com",
       image:
         "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
@@ -19,7 +19,7 @@ const Users = () => {
       placeCount: 3,
     },
     {
-      id: "u1",
+      id: "u4",
       email: "davoodsh000@gmail.com",
       image:
         "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
