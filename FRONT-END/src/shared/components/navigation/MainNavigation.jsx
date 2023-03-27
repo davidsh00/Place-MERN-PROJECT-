@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import MainHeader from "./MainHeader";
@@ -7,10 +7,10 @@ import NavLinks from "./NavLinks";
 import "./MainNavigation.css";
 import SidebarDrawer from "./SideDrawer";
 import BackDrop from "../UIElements/BackDrop";
-
+import { authContext } from "../../context/auth-context";
 
 const MainNavigation = () => {
-
+  const auth = useContext(authContext);
   const navigate = useNavigate();
   useEffect(() => {
     setIsOpenSideDrawer(false);
@@ -36,7 +36,9 @@ const MainNavigation = () => {
           <span />
         </div>
         <h1 className="title">
-          <Link to="/">Your Places</Link>
+          <Link to="/">
+            Places{auth.isLoggedIn && ` (Hello ${auth.user.name})`}
+          </Link>
         </h1>
         <nav>
           <NavLinks />

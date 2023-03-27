@@ -8,14 +8,19 @@ const UserItem = ({ item }) => {
       <Link to={`${item.id}/places`}>
         <Card>
           <div className={styles.userItem}>
-            <div className={styles.avatar }>
-              <Avatar image={item.image} alt={`${item.name} profile`} />
+            <div className={styles.avatar}>
+              <Avatar
+                image={`http://localhost:5000/${item.image}`}
+                alt={`${item.name} profile`}
+              />
             </div>
             <div className={styles.right}>
               <header>{item.name}</header>
               <div className={styles.email}>{item.email}</div>
               <div className={styles.placeCount}>
-                {item.placeCount} {item.placeCount === 1 ? "Place" : "Places"}
+                {`${item.places.length} ${
+                  item.places.length <= 1 ? "Place" : "Places"
+                }`}
               </div>
             </div>
           </div>

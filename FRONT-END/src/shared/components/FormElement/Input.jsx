@@ -48,8 +48,8 @@ const Input = ({
         rows={rows || 3}
         placeholder={placeholder}
         onChange={changeInputHandler}
-        value={inputState.value}
         onFocus={touchInputHandler}
+        value={inputState.value}
       />
     ) : (
       <input

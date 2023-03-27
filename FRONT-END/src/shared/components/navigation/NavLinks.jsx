@@ -15,7 +15,7 @@ const NavLinks = ({ onClick }) => {
             <NavLink to="/places/new">ADD PLACES</NavLink>
           </li>
           <li>
-            <NavLink to="/u1/places">MY PLACES</NavLink>
+            <NavLink to={`/${auth.user.id}/places`}>MY PLACES</NavLink>
           </li>
           <li>
             <button className="link" onClick={auth.logout}>

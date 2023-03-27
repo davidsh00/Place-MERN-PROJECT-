@@ -1,64 +1,27 @@
+import { useEffect, useState } from "react";
+import ErrorModal from "../../shared/components/UIElements/ErrorModal";
+import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
+import { useHttpClient } from "../../shared/hook/http-hook";
 import UserList from "../components/UserList";
 const Users = () => {
-  const dummyData = [
-    {
-      id: "u1",
-      email:
-        "davoodsh000@dddddddddddddddddddd ddddddddddddddddddddddddddddddddddddddddddgmail.com",
-      image:
-        "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-      name: "David",
-      placeCount: 3,
-    },
-    {
-      id: "u2",
-      email: "davoodsh000@gmail.com",
-      image:
-        "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-      name: "David",
-      placeCount: 3,
-    },
-    {
-      id: "u4",
-      email: "davoodsh000@gmail.com",
-      image:
-        "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-      name: "David",
-      placeCount: 3,
-    },
-    {
-      id: "u1",
-      email: "davoodsh000@gmail.com",
-      image:
-        "https://images.pexotos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-      name: "David",
-      placeCount: 3,
-    },
-    {
-      id: "u1",
-      email: "davoodsh000@gmail.com",
-      image:
-        "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-      name: "David",
-      placeCount: 3,
-    },
-    {
-      id: "u1",
-      email: "davoodsh000@gmail.com",
-      image:
-        "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-      name: "David",
-      placeCount: 3,
-    },
-    {
-      id: "u1",
-      email: "davoodsh000@gmail.com",
-      image:
-        "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-      name: "David",
-      placeCount: 3,
-    },
-  ];
-  return <UserList items={dummyData} />;
+  const { isLoading, error, clearError, sendReq } = useHttpClient();
+  const [loadedUser, setLoadedUser] = useState([]);
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const responseData = await sendReq("http://localhost:5000/api/users");
+        setLoadedUser(responseData.users);
+      } catch (error) {}
+    };
+    fetchUsers();
+  }, [sendReq]);
+  return (
+    <>
+      <ErrorModal error={error} onClear={clearError} />
+      
+      {isLoading && <LoadingSpinner overlay />}
+      {!isLoading  && <UserList items={loadedUser} />}
+    </>
+  );
 };
 export default Users;

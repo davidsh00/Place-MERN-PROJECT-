@@ -1,6 +1,13 @@
 .place-item .card>*{
     @apply mb-4
 }
+.place-item .card{
+    height: 100%;
+    width: 100%;
+}
+.place-item .card img{
+    max-height: 300px;
+}
 .place-item__actions{
     @apply flex gap-4 justify-center items-center
 }

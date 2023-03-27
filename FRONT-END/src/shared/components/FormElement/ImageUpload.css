@@ -1,0 +1,9 @@
+.image-upload {
+  @apply flex gap-4 flex-col items-center;
+}
+.image-upload .image-upload__perview {
+  @apply rounded-md w-[200px] h-[200px] overflow-hidden border border-gray-300 flex justify-center items-center;
+}
+.image-upload .image-upload__perview img {
+  object-fit: cover;
+}

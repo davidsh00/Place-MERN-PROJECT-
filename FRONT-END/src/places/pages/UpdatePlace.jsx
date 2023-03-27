@@ -1,50 +1,31 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Button from "../../shared/components/FormElement/Button";
 import Input from "../../shared/components/FormElement/Input";
 import Card from "../../shared/components/UIElements/Card";
+
 import {
   VALIDATOR_MINLENGTH,
   VALIDATOR_REQUIRE,
 } from "../../shared/util/validator";
 import { useForm } from "../../shared/hook/form-hook";
-import { useEffect, useState } from "react";
-const dummy_data = [
-  {
-    placeId: "p1",
-    title: "Holland",
-    description:
-      "Holland is a geographical region[2] and former province on the western coast of the Netherlands.[2] From the 10th to the 16th century, Holland proper was a unified political region within the Holy Roman Empire as a county ruled by the counts of Holland. By the 17th century, the province of Holland had risen to become a maritime and economic power, dominating the other provinces of the newly independent Dutch Republic.",
-    image:
-      "https://lp-cms-production.imgix.net/image_browser/Netherlands%20tulips%20windmillsRF.jpg",
-    creatorId: "u1",
-    location: {
-      lat: 52.191735,
-      lng: 3.0369282,
-    },
-    address: " northwestern Europe with overseas territories in the Caribbean",
-  },
-  {
-    placeId: "p2",
-    title: "Shiraz",
-    description:
-      "Shiraz (/ʃɪəˈrɑːz/ (listen); Persian: شیراز, romanized: Širâz [ʃiːˈɾɒːz] (listen)) is the fifth-most-populous city of Iran[3] and the capital of Fars Province, which has been historically known as Pars (پارس, Pārs) and Persis.[4] As of the 2016 national census, the population of the city was 1,565,572 people, and its built-up area with Sadra was home to almost 1,800,000 inhabitants.[5] A census in 2021 showed an increase in the city's population to 1,995,500 people.[6] Shiraz is located in southwestern Iran on the rudkhaneye khoshk (lit. 'dry river') seasonal river. Founded in the early Islamic period, the city has a moderate climate and has been a regional trade center for over a thousand years.",
-    image:
-      "https://media.venturatravel.org/unsafe/800x600/smart/day_detail/82db0bb4-8012-4cc2-987c-c50972034c62-nasir_al-_mulk_mosque-_shiraz-cropped.jpg",
-    creatorId: "u2",
-    location: {
-      lat: 29.6663351,
-      lng: 52.3906159,
-    },
-    address: " shiraz iran",
-  },
-];
-const UpdatePlace = () => {
-  const [loading, setLoading] = useState(true);
+import { useContext, useEffect, useState } from "react";
+import { useHttpClient } from "../../shared/hook/http-hook";
+import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
+import ErrorModal from "../../shared/components/UIElements/ErrorModal";
+import { authContext } from "../../shared/context/auth-context";
+import ImageUpload from "../../shared/components/FormElement/ImageUpload";
 
+const UpdatePlace = () => {
+  const { isLoading, clearError, error, sendReq } = useHttpClient();
+  const { user } = useContext(authContext);
   const { pId } = useParams();
 
   const [formState, changeInputHandler, setFormData] = useForm(
     {
+      image: {
+        value: "",
+        isValid: false,
+      },
       title: {
         value: "",
         isValid: false,
@@ -56,61 +37,95 @@ const UpdatePlace = () => {
     },
     false
   );
-  const identifyPlace = dummy_data.find((place) => place.placeId === pId);
-
+  const [loadedPlace, setLoadedPlace] = useState();
   useEffect(() => {
-    if (identifyPlace) {
-      setFormData(
-        {
-          title: {
-            value: identifyPlace.title,
-            isValid: true,
-          },
-          description: {
-            value: identifyPlace.description,
-            isValid: true,
-          },
-        },
-        true
-      );
-    }
+    const fetchPlaceForUpdate = async () => {
+      try {
+        const responseData = await sendReq(
+          `http://localhost:5000/api/places/${pId}`
+        );
 
-    setLoading(false);
-  }, [identifyPlace, setFormData]);
-  function updatePlaceHandler(event) {
+        setLoadedPlace(responseData.place);
+        setFormData(
+          {
+            image: {
+              value: responseData.place.image,
+              isValid: true,
+            },
+            title: {
+              value: responseData.place.title,
+              isValid: true,
+            },
+            description: {
+              value: responseData.place.description,
+              isValid: true,
+            },
+          },
+          true
+        );
+      } catch (error) {}
+    };
+    fetchPlaceForUpdate();
+  }, [sendReq, setFormData, pId]);
+  const navigate = useNavigate();
+  async function updatePlaceHandler(event) {
     event.preventDefault();
-    console.log(formState.inputs); //must send to the backEnd
+    const formData = new FormData();
+    formData.append("creatorId", user.id);
+    formData.append("description", formState.inputs.description.value);
+    formData.append("title", formState.inputs.title.value);
+    formData.append("image", formState.inputs.image.value);
+    try {
+      await sendReq(
+        `http://localhost:5000/api/places/${pId}`,
+        "PATCH",
+        {},
+        formData
+      );
+      navigate(`/${user.id}/places`);
+    } catch (error) {}
   }
 
-  if (loading) {
-    return <Card>Loading...</Card>;
+  if (isLoading) {
+    return <LoadingSpinner overlay />;
   }
-  if (!identifyPlace) {
+  if (!isLoading && !loadedPlace) {
     return <Card>Could not find place</Card>;
   }
   return (
-    <form className="place-form" onSubmit={updatePlaceHandler}>
-      <Input
-        id="title"
-        errorMessage="Enter valid Title"
-        validators={[VALIDATOR_REQUIRE()]}
-        label="Title"
-        onChange={changeInputHandler}
-        initialValue={identifyPlace.title}
-        initialValid={formState.inputs.title.isValid}
-      />
-      <Input
-        elementType="textarea"
-        label="Description"
-        id="description"
-        validators={[VALIDATOR_MINLENGTH(5)]}
-        errorMessage="Enter valid Value(at least 5 characters)"
-        onChange={changeInputHandler}
-        initialValue={formState.inputs.description.value}
-        initialValid={formState.inputs.description.isValid}
-      />
-      <Button disabled={!formState.isValid}>UPDATE</Button>
-    </form>
+    <>
+      <ErrorModal error={error} onClear={clearError} />
+      {!isLoading && loadedPlace && (
+        <form className="place-form" onSubmit={updatePlaceHandler}>
+          <ImageUpload
+            initialValue={loadedPlace.image}
+            onInput={changeInputHandler}
+            errorText="select correct photo"
+            id="image"
+          />
+          <Input
+            id="title"
+            errorMessage="Enter valid Title"
+            validators={[VALIDATOR_REQUIRE()]}
+            label="Title"
+            onChange={changeInputHandler}
+            initialValue={loadedPlace.title}
+            initialValid={true}
+          />
+          <Input
+            elementType="textarea"
+            label="Description"
+            id="description"
+            validators={[VALIDATOR_MINLENGTH(5)]}
+            errorMessage="Enter valid Value(at least 5 characters)"
+            onChange={changeInputHandler}
+            initialValue={loadedPlace.description}
+            initialValid={true}
+          />
+          <Button disabled={!formState.isValid}>UPDATE</Button>
+        </form>
+      )}
+    </>
   );
 };
 export default UpdatePlace;

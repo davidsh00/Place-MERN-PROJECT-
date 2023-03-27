@@ -1,0 +1,8 @@
+.places-list{
+    @apply flex gap-4 w-full  flex-wrap justify-center items-stretch
+}
+.places-list >*{
+    max-width: 360px;
+    flex-grow: 1;
+    flex-shrink: 0;
+}
