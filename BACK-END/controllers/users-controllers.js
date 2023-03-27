@@ -10,7 +10,9 @@ const getAllUsers = async (req, res, next) => {
   if (!usersByPlaces) {
     return next(new HttpError("there is no user found ", 404));
   }
-  res.json({ users: usersByPlaces });
+  res.json({
+    users: usersByPlaces.map((user) => user.toObject({ getters: true })),
+  });
 };
 
 const userSingup = async (req, res, next) => {
@@ -39,6 +41,7 @@ const userSingup = async (req, res, next) => {
     name,
     password,
     places: [],
+    image: req.file.path,
   });
 
   try {
@@ -46,7 +49,10 @@ const userSingup = async (req, res, next) => {
   } catch (error) {
     return next(new HttpError("signup faild,try again later", 500));
   }
-  res.status(201).json({ user: newUser, message: "signUp successfully" });
+  res.status(201).json({
+    user: newUser.toObject({ getters: true }),
+    message: "signUp successfully",
+  });
 };
 
 const userLogin = async (req, res, next) => {

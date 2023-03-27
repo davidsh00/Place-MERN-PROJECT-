@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const { validationResult } = require("express-validator");
+const fs = require("fs");
 
 const HttpError = require("../models/http-error");
 const placeModel = require("../models/place-model");
@@ -8,7 +9,7 @@ const getPlaceById = async (req, res, next) => {
   const pid = req.params.pid;
   let place;
   try {
-    place = await placeModel.findById(pid).populate('creatorId','-password');
+    place = await placeModel.findById(pid).populate("creatorId", "-password");
   } catch (error) {
     console.log(error);
     return next(new HttpError("could not find your place by id ", 500));
@@ -27,9 +28,9 @@ const getUserPlaces = async (req, res, next) => {
   } catch (error) {
     return next(new HttpError("could not get user places", 500));
   }
-  if (places.length === 0) {
-    return next(new HttpError("could not find places for your user id", 404));
-  }
+  // if (places.length === 0) {
+  //   return next(new HttpError("could not find places for your user id", 404));
+  // }
   res.json({
     length: places.length,
     places: places.map((place) => place.toObject({ getters: true })),
@@ -57,8 +58,7 @@ const createPlace = async (req, res, next) => {
     description,
     address,
     creatorId: user,
-    image:
-      "https://www.elegantthemes.com/blog/wp-content/uploads/2019/12/401-error-wordpress-featured-image.jpg",
+    image: req.file.path,
   });
   try {
     // const sess = await mongoose.startSession();
@@ -80,30 +80,43 @@ const updatePlace = async (req, res, next) => {
     return next(new HttpError("invalid Data", 422));
   }
   const { pid } = req.params;
-  const { title, description } = req.body;
+  const { title, description, creatorId } = req.body;
   let updatedPlace;
+  let oldImage;
   try {
     updatedPlace = await placeModel.findById(pid);
-    console.log(updatedPlace);
+    if (updatedPlace.creatorId.toString() !== creatorId) {
+      return next(
+        new HttpError("you could not update this place, unathorization", 401)
+      );
+    }
+    oldImage = updatedPlace.image;
+
     updatedPlace.title = title;
     updatedPlace.description = description;
+    updatedPlace.image = req.file.path;
     await updatedPlace.save();
+    fs.unlink(oldImage, (error) => {
+      if (error) {
+        console.log(error);
+      }
+    });
   } catch (error) {
     return next(new HttpError("could not update your place", 500));
   }
   if (!updatePlace) {
     res.status(404).json({ message: "could not find your place for update" });
   }
-  res
-    .status(401)
-    .json({ updatedPlace: updatedPlace.toObject({ getters: true }) });
+  res.status(204).json({});
 };
 const removePlace = async (req, res, next) => {
   const { pid } = req.params;
   let removedPlace;
+  let path;
+
   try {
     removedPlace = await placeModel.findById(pid);
-    console.log(removedPlace);
+    path = removedPlace.image;
     if (!removedPlace) {
       return next(
         new HttpError("your place you want to delete is not found", 404)
@@ -113,6 +126,11 @@ const removePlace = async (req, res, next) => {
   } catch (error) {
     return next(new HttpError("could not delete item", 500));
   }
+  fs.unlink(path, (err) => {
+    if (err) {
+      console.log(err);
+    }
+  });
   res.json({ message: "your place successfully removed" });
 };
 exports.getUserPlaces = getUserPlaces;
