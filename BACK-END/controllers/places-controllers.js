@@ -41,7 +41,8 @@ const createPlace = async (req, res, next) => {
   if (!errors.isEmpty()) {
     return next(new HttpError("input invalid", 422));
   }
-  const { creatorId, title, description, address } = req.body;
+  const { title, description, address } = req.body;
+  const creatorId = req.userData.userId;
   let user;
   try {
     user = await userModel.findById(creatorId);
@@ -80,9 +81,11 @@ const updatePlace = async (req, res, next) => {
     return next(new HttpError("invalid Data", 422));
   }
   const { pid } = req.params;
-  const { title, description, creatorId } = req.body;
+  const { title, description } = req.body;
+  const creatorId = req.userData.userId;
   let updatedPlace;
   let oldImage;
+
   try {
     updatedPlace = await placeModel.findById(pid);
     if (updatedPlace.creatorId.toString() !== creatorId) {
@@ -113,13 +116,18 @@ const removePlace = async (req, res, next) => {
   const { pid } = req.params;
   let removedPlace;
   let path;
-
+  const creatorId = req.userData.userId;
   try {
     removedPlace = await placeModel.findById(pid);
     path = removedPlace.image;
     if (!removedPlace) {
       return next(
         new HttpError("your place you want to delete is not found", 404)
+      );
+    }
+    if (removedPlace.creatorId.toString() !== creatorId) {
+      return next(
+        new HttpError("you colud not delete item that not owner", 401)
       );
     }
     await placeModel.findByIdAndDelete(pid);

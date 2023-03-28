@@ -11,16 +11,18 @@ const Users = () => {
       try {
         const responseData = await sendReq("http://localhost:5000/api/users");
         setLoadedUser(responseData.users);
-      } catch (error) {}
+      } catch (error) {
+        console.log(error);
+      }
     };
     fetchUsers();
   }, [sendReq]);
   return (
     <>
       <ErrorModal error={error} onClear={clearError} />
-      
+
       {isLoading && <LoadingSpinner overlay />}
-      {!isLoading  && <UserList items={loadedUser} />}
+      {!isLoading && <UserList items={loadedUser} />}
     </>
   );
 };

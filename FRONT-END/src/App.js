@@ -11,24 +11,14 @@ import UserPlaces from "./places/pages/UserPlaces";
 import UpdatePlace from "./places/pages/UpdatePlace";
 import Auth from "./Users/pages/Auth";
 import { authContext } from "./shared/context/auth-context";
-
+import { useAuth } from "./shared/hook/auth-hook";
 import "./App.css";
-import { useCallback, useState } from "react";
+import LoadingSpinner from "./shared/components/UIElements/LoadingSpinner";
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState({});
-  const login = useCallback((user) => {
-    setIsLoggedIn(true);
-    setUser({ id: user.id, name: user.name, email: user.email });
-  }, []);
-  const logout = useCallback(() => {
-    setIsLoggedIn(false);
-    setUser({ id: null, email: null, name: null });
-  }, []);
-
+  const { isLoading, user, login, logout } = useAuth();
   let route;
-  if (isLoggedIn) {
+  if (!!user.token) {
     route = (
       <>
         <Route path="/" element={<Users />} />
@@ -48,8 +38,13 @@ function App() {
       </>
     );
   }
+  if (isLoading) {
+    return <LoadingSpinner overlay />;
+  }
   return (
-    <authContext.Provider value={{ isLoggedIn, logout, login, user }}>
+    <authContext.Provider
+      value={{ isLoggedIn: !!user.token, logout, login, user }}
+    >
       <Router>
         <MainNavigation />
         <main>

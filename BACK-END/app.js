@@ -10,10 +10,16 @@ const usersRoutes = require("./routes/users-routes");
 const HttpError = require("./models/http-error");
 
 const app = express();
-app.use("/uploads/images", express.static(path.join("uploads", "images")));
-app.use(bodyParser.json());
-
 app.use(cors());
+app.use(
+  "/uploads/images/users",
+  express.static(path.join("uploads", "images", "users"))
+);
+app.use(
+  "/uploads/images/places",
+  express.static(path.join("uploads", "images", "places"))
+);
+app.use(bodyParser.json());
 
 // Routes
 app.use("/api/places/", placesRoutes);

@@ -1,5 +1,6 @@
 const { validationResult } = require("express-validator");
-
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const HttpError = require("../models/http-error");
 const userModel = require("../models/user-model");
 
@@ -36,22 +37,36 @@ const userSingup = async (req, res, next) => {
     );
   }
 
+  let hashedPassword;
+  try {
+    hashedPassword = await bcrypt.hash(password, 12);
+  } catch (error) {
+    return next(new HttpError("could not signup ", 500));
+  }
   const newUser = new userModel({
     email,
     name,
-    password,
+    password: hashedPassword,
     places: [],
     image: req.file.path,
   });
 
+  let token;
+  try {
+    token = jwt.sign({ userId: newUser.id, email }, "Dont share with anyOne", {
+      expiresIn: "1h",
+    });
+  } catch (error) {
+    return next(new HttpError("could not signup ", 500));
+  }
   try {
     await newUser.save();
   } catch (error) {
     return next(new HttpError("signup faild,try again later", 500));
   }
+
   res.status(201).json({
-    user: newUser.toObject({ getters: true }),
-    message: "signUp successfully",
+    user: { email: newUser.email, name: newUser.name, id: newUser.id, token },
   });
 };
 
@@ -67,12 +82,37 @@ const userLogin = async (req, res, next) => {
   if (!existUser) {
     return next(new HttpError("your userEmail is invalid", 401));
   }
-  if (existUser.password !== password) {
+  let isValidPassword;
+
+  try {
+    isValidPassword = await bcrypt.compare(password, existUser.password);
+  } catch (error) {
+    return next(new HttpError("could not login ", 500));
+  }
+  if (!isValidPassword) {
     return next(new HttpError("your userPasswoerd is invalid", 401));
   }
+  let token;
+  try {
+    token = jwt.sign(
+      { userId: existUser.id, email: existUser.email },
+      "Dont share with anyOne",
+      {
+        expiresIn: "1h",
+      }
+    );
+  } catch (error) {
+    return next(new HttpError("could not logging in ", 500));
+  }
+
   res.json({
-    user: existUser.toObject({ getters: true }),
-    message: "logged In...",
+    user: {
+      email: existUser.email,
+      name: existUser.name,
+      id: existUser.id,
+      token,
+    },
+    expiresToken: Date.now() + 1000 * 60 * 60,
   });
 };
 

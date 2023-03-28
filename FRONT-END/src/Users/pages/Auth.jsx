@@ -46,7 +46,7 @@ const Auth = () => {
             password: stateForm.inputs.password.value,
           })
         );
-        auth.login(responseData.user);
+        auth.login(responseData.user, responseData.expiresToken);
       } catch (error) {}
     } else {
       const signupFormData = new FormData();
@@ -54,7 +54,6 @@ const Auth = () => {
       signupFormData.append("name", stateForm.inputs.name.value);
       signupFormData.append("password", stateForm.inputs.password.value);
       signupFormData.append("image", stateForm.inputs.image.value);
-      console.log(signupFormData.entries());
       try {
         const responseData = await sendReq(
           "http://localhost:5000/api/users/signup",
@@ -62,7 +61,7 @@ const Auth = () => {
           {},
           signupFormData
         );
-        auth.login(responseData.user);
+        auth.login(responseData.user, responseData.expiresToken);
       } catch (error) {}
     }
   }

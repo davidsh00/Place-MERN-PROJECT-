@@ -1,17 +1,28 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback, useContext } from "react";
+import { authContext } from "../context/auth-context";
 
 export const useHttpClient = () => {
   const [isLoading, setIsloading] = useState(false);
   const [error, setError] = useState(null);
   const activeHttpReq = useRef([]);
+  const auth = useContext(authContext);
 
   const sendReq = useCallback(
-    async (url, method = "GET", headers, body = null) => {
+    async (url, method = "GET", headers = {}, body = null) => {
       const httpAbortCtrl = new AbortController();
       activeHttpReq.current.push(httpAbortCtrl);
+
+      const finallHeader = { ...headers };
+      if (!!auth.user.token) {
+        finallHeader.Authorization = "bearer " + auth.user.token;
+      }
       setIsloading(true);
       try {
-        const response = await fetch(url, { method, headers, body });
+        const response = await fetch(url, {
+          method,
+          headers: finallHeader,
+          body,
+        });
         let responseData;
         if (response.status !== 204) {
           responseData = await response.json();
