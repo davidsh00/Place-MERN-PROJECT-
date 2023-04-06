@@ -44,7 +44,7 @@ app.use((error, req, res, next) => {
   res.json({ message: error.message || "an unknow error has occured!" });
 });
 mongoose
-  .connect("mongodb://127.0.0.1:1010/Place")
+  .connect("mongodb://127.0.0.1:27017/Place")
   .then(() => {
     app.listen(5000);
   })

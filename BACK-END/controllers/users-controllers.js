@@ -48,7 +48,7 @@ const userSingup = async (req, res, next) => {
     name,
     password: hashedPassword,
     places: [],
-    image: req.file.path,
+    image: req.file ? req.file.path : "none",
   });
 
   let token;
@@ -62,6 +62,7 @@ const userSingup = async (req, res, next) => {
   try {
     await newUser.save();
   } catch (error) {
+    console.log(error);
     return next(new HttpError("signup faild,try again later", 500));
   }
 
